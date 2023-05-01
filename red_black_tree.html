@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+	<span id="label">Ввелите текст:</span>
+	<input id="data" name="data">
+	<button id="button">ОК</button>
+	<br>
+	<div>Результат:</div>
+	<div id="result"></div>
+	<script>
+		class node
+		{
+			constructor(data)
+			{
+				this.data = data;
+				this.left = null;
+				this.right = null;
+				this.color = true;
+			}
+		}
+		 
+		let root = null;
+		 
+		function rotateLeft(myNode)
+		{
+			printLn("поворот влево!!<br>");
+			let child = myNode.right;
+			let childLeft = child.left;
+	  
+			child.left = myNode;
+			myNode.right = childLeft;
+	  
+			return child;
+		}
+		 
+		function rotateRight(myNode)
+		{
+			printLn("поворот вправо<br>");
+			let child = myNode.left;
+			let childRight = child.right;
+	  
+			child.right = myNode;
+			myNode.left = childRight;
+	  
+			return child;
+		}
+		 
+		function isRed(myNode)
+		{
+			if (myNode == null)
+			return false;
+			return (myNode.color == true);
+		}   
+		 
+		function swapColors(node1,node2)
+		{
+			let temp = node1.color;
+			node1.color = node2.color;
+			node2.color = temp;
+		}
+		 
+		function insert(myNode, data)
+		{
+			if (myNode == null) {
+				return new node(data);
+			}
+	  
+			if (data < myNode.data) {
+				myNode.left = insert(myNode.left, data);
+			} else if (data > myNode.data) {
+				myNode.right = insert(myNode.right, data);
+			} else {
+				return myNode;
+			}
+	  
+			if (isRed(myNode.right) && !isRed(myNode.left)) {
+				myNode = rotateLeft(myNode);
+				swapColors(myNode, myNode.left);
+	  
+			}
+	  
+			if (isRed(myNode.left) && isRed(myNode.left.left)) {
+				myNode = rotateRight(myNode);
+				swapColors(myNode, myNode.right);
+			}
+	  
+			if (isRed(myNode.left) && isRed(myNode.right)) {
+				myNode.color = !myNode.color;
+				myNode.left.color = false;
+				myNode.right.color = false;
+			}
+			
+			return myNode;
+		}
+		 
+		function inorder(node)
+		{
+			if (node != null) {
+				inorder(node.left);
+				printLn(node.data + " ");
+				inorder(node.right);
+			}
+		}
+		
+		const button = document.querySelector("#button");
+		const input = document.querySelector("#data");
+		
+		button.addEventListener("click", function(event) {
+			root = insert(root, +input.value);
+			root.color = false;
+			inorder(root);
+			printLn("<br>");
+			console.log(root);
+			input.value = ""
+		});
+		
+		input.addEventListener("keydown", function(event) {
+			if (event.keyCode === 13) {
+				root = insert(root, +input.value);
+				root.color = false;
+				inorder(root);
+				printLn("<br>");
+				console.log(root);
+				input.value = ""
+			}
+		});
+		
+		function printLn(text) {
+			result.innerHTML += text;
+		}
+	</script>
+</body>
+</html>
